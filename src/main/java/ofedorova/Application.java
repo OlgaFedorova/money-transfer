@@ -3,6 +3,8 @@ package ofedorova;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ofedorova.application.account.AccountRequestValidator;
 import ofedorova.application.account.AccountService;
+import ofedorova.application.transfer.TransferRequestValidator;
+import ofedorova.application.transfer.TransferService;
 import ofedorova.application.user.UserRequestValidator;
 import ofedorova.application.user.UserService;
 import ofedorova.domain.account.AccountRepository;
@@ -10,6 +12,7 @@ import ofedorova.domain.user.UserRepository;
 import ofedorova.infrastructure.repository.AccountRepositoryImpl;
 import ofedorova.infrastructure.repository.UserRepositoryImpl;
 import ofedorova.infrastructure.rest.AccountServlet;
+import ofedorova.infrastructure.rest.TransferServlet;
 import ofedorova.infrastructure.rest.UserServlet;
 import ofedorova.infrastructure.util.ResponseMapper;
 import org.eclipse.jetty.server.Server;
@@ -34,6 +37,8 @@ public class Application {
     beans.putIfAbsent(ObjectMapper.class, new ObjectMapper());
     UserRepository userRepository = new UserRepositoryImpl();
     beans.put(UserRepository.class, userRepository);
+    AccountRepository accountRepository = new AccountRepositoryImpl((UserRepository) beans.get(UserRepository.class));
+    beans.put(AccountRepository.class, accountRepository);
   }
 
   private void initUserApi() {
@@ -50,18 +55,29 @@ public class Application {
   private void initAccountApi() {
     initCommon();
 
-    AccountRepository accountRepository = new AccountRepositoryImpl((UserRepository) beans.get(UserRepository.class));
     AccountRequestValidator accountRequestValidator = new AccountRequestValidator();
-    AccountService accountService = new AccountService(accountRequestValidator, accountRepository);
+    AccountService accountService = new AccountService(accountRequestValidator, (AccountRepository) beans.get(AccountRepository.class));
     AccountServlet accountServlet = new AccountServlet(accountService, (ResponseMapper) beans.get(ResponseMapper.class), (ObjectMapper) beans.get(ObjectMapper.class));
 
     ServletContextHandler context = (ServletContextHandler) beans.get(ServletContextHandler.class);
     context.addServlet(new ServletHolder(accountServlet), "/users/accounts/*");
   }
 
+  private void initTransferApi() {
+    initCommon();
+
+    TransferRequestValidator transferRequestValidator = new TransferRequestValidator();
+    TransferService transferService = new TransferService((AccountRepository) beans.get(AccountRepository.class), transferRequestValidator);
+    TransferServlet transferServlet = new TransferServlet(transferService, (ResponseMapper) beans.get(ResponseMapper.class), (ObjectMapper) beans.get(ObjectMapper.class));
+
+    ServletContextHandler context = (ServletContextHandler) beans.get(ServletContextHandler.class);
+    context.addServlet(new ServletHolder(transferServlet), "/transfer");
+  }
+
   public void init() {
     initUserApi();
     initAccountApi();
+    initTransferApi();
   }
 
   public void start() throws Exception {

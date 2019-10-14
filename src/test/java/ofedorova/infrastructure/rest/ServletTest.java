@@ -24,11 +24,12 @@ public class ServletTest {
   protected static final String GET_ACCOUNTS_BY_USER_ID_AND_TITLE = "/users/accounts/%s/%s";
   protected static final String PUT_ACCOUNTS_DEPOSIT = "/users/accounts/deposit";
   protected static final String PUT_ACCOUNTS_WITHDRAW = "/users/accounts/withdraw";
+  protected static final String PUT_TRANSFER = "/transfer";
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
 
-  protected static User createAndGetUser(String userName,  HttpClient client, URIBuilder builder) throws Exception {
+  protected static User createAndGetUser(String userName, HttpClient client, URIBuilder builder) throws Exception {
     ofedorova.application.user.CreateRequest createUserRequest = new ofedorova.application.user.CreateRequest();
     createUserRequest.setName(userName);
 
@@ -45,7 +46,7 @@ public class ServletTest {
     return user;
   }
 
-  protected static User createAndGetUserWithAccount (String userName, String accountTitle,  HttpClient client, URIBuilder builder) throws Exception {
+  protected static User createAndGetUserWithAccount(String userName, String accountTitle, HttpClient client, URIBuilder builder) throws Exception {
     User user = createAndGetUser(userName, client, builder);
 
     CreateRequest createRequest = new CreateRequest();
@@ -61,12 +62,12 @@ public class ServletTest {
     return getUserByName(userName, client, builder);
   }
 
-  protected static Account getAccountById(UUID id,  HttpClient client, URIBuilder builder) throws Exception{
+  protected static Account getAccountById(UUID id, HttpClient client, URIBuilder builder) throws Exception {
     HttpResponse responseGetAccount = client.execute(new HttpGet(builder.setPath(String.format(GET_ACCOUNTS_BY_ID, id)).build()));
     return objectMapper.readValue(EntityUtils.toString(responseGetAccount.getEntity()), Account.class);
   }
 
-  private static User getUserByName(String name,  HttpClient client, URIBuilder builder) throws Exception {
+  private static User getUserByName(String name, HttpClient client, URIBuilder builder) throws Exception {
     HttpResponse responseGetUser = client.execute(new HttpGet(builder.setPath(String.format(GET_USERS, name)).build()));
     return objectMapper.readValue(EntityUtils.toString(responseGetUser.getEntity()), User.class);
   }

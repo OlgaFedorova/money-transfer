@@ -8,21 +8,27 @@ public class TransferRequest {
   private UUID accountIdTo;
   private Double amount;
 
-  public TransferRequest(UUID accountIdFrom, UUID accountIdTo, double amount) {
-    this.accountIdFrom = accountIdFrom;
-    this.accountIdTo = accountIdTo;
-    this.amount = amount;
-  }
-
   public UUID getAccountIdFrom() {
     return accountIdFrom;
+  }
+
+  public void setAccountIdFrom(UUID accountIdFrom) {
+    this.accountIdFrom = accountIdFrom;
   }
 
   public UUID getAccountIdTo() {
     return accountIdTo;
   }
 
+  public void setAccountIdTo(UUID accountIdTo) {
+    this.accountIdTo = accountIdTo;
+  }
+
   public Double getAmount() {
     return amount;
+  }
+
+  public void setAmount(Double amount) {
+    this.amount = amount;
   }
 }

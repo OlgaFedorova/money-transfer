@@ -8,9 +8,9 @@ public class TransferService {
   private final AccountRepository accountRepository;
   private final TransferRequestValidator requestValidator;
 
-  public TransferService(AccountRepository accountRepository) {
+  public TransferService(AccountRepository accountRepository, TransferRequestValidator requestValidator) {
     this.accountRepository = accountRepository;
-    this.requestValidator = new TransferRequestValidator();
+    this.requestValidator = requestValidator;
   }
 
   public void transfer(TransferRequest request) {

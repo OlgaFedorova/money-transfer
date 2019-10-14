@@ -17,8 +17,22 @@ The infrastructure-level can be dependent on application-level and domain-level.
 The application-level can have domain-level dependencies.
 The domain-level is independent of other levels.
 
+### Transfer money operation description
+Why did I do the non-blocking, non-synchronizing money transfer operation?
+The money transfer operation consists of two parts:
+- to withdraw money from one account
+- to deposit money to another account
+
+Each of these operations is implemented thread-safety through using of AtomicReference and the compareAndSet algorithm.
+As soon as we can withdraw money from one account (we passed the validation check that money enough and correctly set the new available amount), we can deposit money to the other account.
+
+In my naive algorithm, I exclude such life situations that the account on which the money is deposited can be closed, and in this case the money will not reach the this account.
+To handle such case, it is enough for us to return the money to the account from which they were withdrawed. 
+We can assume that the account from which the money was withdrawed was also closed. In this case, how to return the money to the client will be managed by a separate banking mechanism or department.
+
 
 ### Available Services
+I created only those endpoints that I need to debug and test the main operation transfer money.
 
 #### GET /user/{userName} 
 **Usage:** get user by user name
@@ -106,6 +120,17 @@ The domain-level is independent of other levels.
      	"accountId": "e807fc5e-4546-4cfe-9ea4-7c69aed5c05f",
      	"amount": 150.31     	
      }
+
+#### PUT /transfer
+**Usage:** transfer some money from one user's account to another
+
+**Body request:**
+
+     {
+     	"accountIdFrom": "48d82288-d616-4072-9c58-07f8b91d1917",
+     	"accountIdTo": "e807fc5e-4546-4cfe-9ea4-7c69aed5c05f",
+     	"amount": 333.78     	
+     }   
 
 ### Http Status
 - 200 OK: The request has succeeded

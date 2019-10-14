@@ -870,6 +870,41 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "transfer money fom account 1 user1 to account 2 user 2",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"accountIdFrom\": \"{{account1_user1_id}}\",\n\t\"accountIdTo\": \"{{account2_user2_id}}\",\n\t\"amount\": 333.33\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transfer"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
